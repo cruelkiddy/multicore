@@ -1,0 +1,33 @@
+`ifndef COHERENCY_CONTROL_IF_VH
+`define COHERENCY_CONTROL_IF_VH
+
+`include "cpu_types_pkg.vh"
+
+interface coherency_control_if;
+
+   import cpu_types_pkg::*;
+
+   //input from cache
+   word_t [1:0] dstoreca;
+   word_t [1:0] daddr_c;
+   logic [1:0] dRENca, dWENca;
+   //input from cache controller
+   logic [1:0] ccwrite, cctrans;
+   //input from memcontrol
+   word_t  dloadmem;
+   logic  dwaitmem;
+
+
+   //output to cache controller
+   logic [1:0] ccwait,ccinv;
+   word_t [1:0] ccsnoopaddr;
+   //output to cache
+   word_t [1:0] dloadca;
+   logic [1:0] dwaitca;
+   //output to memcontrol
+   logic       dREN_m,dWEN_m;
+   word_t daddr_m,dstore_m;
+
+endinterface // coh_control_if
+`endif //  `ifndef COH_CONTROL_IF_VH
+   
