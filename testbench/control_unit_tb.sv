@@ -18,7 +18,7 @@ module control_unit_tb;
 
    //test program
    test PROG (CLK, nRST, ruif);
-   control_unit DUT(CLK, nRST, cuif);
+   control_unit DUT(CLK, nRST, ruif);
 endmodule
 
 program test (input logic CLK, 

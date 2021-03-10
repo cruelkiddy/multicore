@@ -80,12 +80,14 @@ endif
 
 # v, sv or vhdl stems
 VLSTEM			= $(notdir $(basename $(wildcard $(SRCDIR)/*.v $(TBDIR)/*.v)))
-SVSTEM			= $(notdir $(basename $(wildcard $(SRCDIR)/*.sv $(TBDIR)/*.sv)))
+SVSTEM			= $(notdir $(basename $(wildcard $(SRCDIR)/*.sv ))) # $(TBDIR)/*.sv
 VHSTEM			= $(notdir $(basename $(wildcard $(SRCDIR)/*.vhd $(TBDIR)/*.vhd)))
 HDSTEM			= $(notdir $(basename $(wildcard $(INCDIR)/*.vh)))
 SRCSTEM			= $(VLSTEM) $(SVSTEM) $(VHSTEM)
 SRCS				= $(addsuffix .v,$(VLSTEM)) $(addsuffix .sv,$(SVSTEM)) $(addsuffix .vhd,$(VHSTEM))
 HDRS				= $(addsuffix .vh,$(HDSTEM))
+
+SVTBSTEM 		= $(notdir $(basename $(wildcard $(TBDIR)/*.sv )))
 
 # dep files
 DEPS				= $(addsuffix .d, $(VLSTEM) $(SVSTEM) $(VHSTEM) $(HDSTEM))
@@ -113,8 +115,11 @@ vpath %.d		$(DEPDIR)/
 vpath %			$(DEPDIR)/
 
 # set default rule
-default: help
+# default: help
 
+# To test make output
+default: 
+	@echo ""
 # v,sv library search paths
 ifneq (0,$(words $(VLSTEM) $(SVSTEM)))
 SIMLIBS=$(addprefix -L ,$(filter %_ver,$(shell ls $(COURSELIBS))))
@@ -164,7 +169,7 @@ $(LIBDIR):
 	@touch $(DEPDIR)/$@
 
 # simulation rules
-%_tb.sim %_tb.wav %.sim %.wav: %_tb
+%_tb.sim %_tb.wav %.sim %.wav: # %_tb
 	@$(VSIM) $(SIMTERM) -do $(SIMDO) $(SIMLIBS) $(SIMSYN) -wlf $(addsuffix _tb,$*).wlf $(LIBDIR).$(addsuffix _tb,$*)
 
 # synthesis rules for mapped simulation
@@ -212,6 +217,12 @@ help:
 	@echo "		'make clean_fpga' to clean fpga dir"
 	@echo "	Obviously a testbench file must exist for some options."
 	@echo ""
+
+source:
+	$(VLOG) $(VERFLAGS) $(SYNDEF) $(addprefix source/, $(addsuffix .sv,$(SVSTEM)))
+
+tb:
+	$(VLOG) $(VERFLAGS) $(SYNDEF) $(addprefix testbench/, $(addsuffix .sv,$(SVTBSTEM)))
 
 ################################################################################
 endif # end GRID nonsense                                                      #
